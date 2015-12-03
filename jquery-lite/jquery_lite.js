@@ -70,4 +70,27 @@
     });
     return new DOMNodeCollection(childrenArray);
   };
+
+  DOMNodeCollection.prototype.parent = function () {
+    var parentArray = [];
+    this.htmlElements.forEach(function(el) {
+      parentArray.push(el.parentNode);
+    });
+    return new DOMNodeCollection(parentArray);
+  };
+
+  DOMNodeCollection.prototype.find = function (selector) {
+    var matches = [];
+    this.htmlElements.forEach(function (el) {
+      matches = matches.concat([].slice.call(el.querySelectorAll(selector)));
+
+    });
+    return new DOMNodeCollection(matches);
+  };
+
+  DOMNodeCollection.prototype.remove = function () {
+    this.htmlElements.forEach( function (el) {
+      el.remove();
+    });
+  };
 }());
