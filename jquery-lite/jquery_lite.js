@@ -93,4 +93,16 @@
       el.remove();
     });
   };
+
+  DOMNodeCollection.prototype.on = function (type, listener) {
+    this.htmlElements.forEach( function (el) {
+      el.addEventListener(type, listener);
+    });
+  };
+
+  DOMNodeCollection.prototype.off = function (type, listener) {
+    this.htmlElements.forEach( function (el) {
+      el.removeEventListener(type, listener);
+    });
+  };
 }());
