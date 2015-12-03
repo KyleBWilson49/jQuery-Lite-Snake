@@ -1,9 +1,25 @@
 (function () {
-  var $l = window.$l = function (selector) {
-    if (selector instanceof HTMLElement) {
-      return new DOMNodeCollection([selector]);
+  var funcArray = [];
+
+  document.onreadystatechange = function () {
+    funcArray.forEach(function (fun) {
+      fun();
+    });
+  };
+
+  var $l = window.$l = function (argument) {
+    if (argument instanceof HTMLElement) {
+      return new DOMNodeCollection([argument]);
+
+    } else if (typeof argument === 'function') {
+        if (document.readyState !== 'interactive') {
+          funcArray.push(argument);
+        } else {
+          argument();
+        }
+
     } else {
-      var elementList = document.querySelectorAll(selector);
+      var elementList = document.querySelectorAll(argument);
       return new DOMNodeCollection([].slice.call(elementList));
     }
   };
@@ -104,5 +120,44 @@
     this.htmlElements.forEach( function (el) {
       el.removeEventListener(type, listener);
     });
+  };
+
+  $l.extend = function () {
+    var args = [].slice.call(arguments);
+    var base = args[0];
+
+    for (var i = 1; i < args.length; i++) {
+      for (var attrname in args[i]) {
+        base[attrname] = args[i][attrname];
+      }
+    }
+    return base;
+  };
+
+  $l.ajax = function (options) {
+    var defaults = {
+      success: function (data, textStatus, jqXHR) {console.log(textStatus);},
+      error: function (jqXHR, textStatus, errorThrown) {console.log(errorThrown);},
+      url: window.location.href,
+      method: 'GET',
+      data: 'hello',
+      contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
+    };
+    var option = this.extend(defaults, options);
+    var xmlhttp = new XMLHttpRequest(option);
+
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+       if(xmlhttp.status == 200){
+        option.success(JSON.parse(xmlhttp.response), "success", xmlhttp);
+       }'There was an error 400')
+       else {
+        option['error'](xmlhttp, 'failure', 'there was an error!');
+       }
+      }
+    };
+
+    xmlhttp.open(option['method'], option['url'], true);
+    xmlhttp.send();
   };
 }());
