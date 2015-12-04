@@ -2,9 +2,11 @@
   var funcArray = [];
 
   document.onreadystatechange = function () {
-    funcArray.forEach(function (fun) {
-      fun();
-    });
+    if(document.readyState === "complete"){
+      funcArray.forEach(function (fun) {
+        fun();
+      });
+    }
   };
 
   var $l = window.$l = function (argument) {
@@ -12,7 +14,7 @@
       return new DOMNodeCollection([argument]);
 
     } else if (typeof argument === 'function') {
-        if (document.readyState !== 'interactive') {
+        if (document.readyState !== 'complete') {
           funcArray.push(argument);
         } else {
           argument();
@@ -82,7 +84,7 @@
   DOMNodeCollection.prototype.children = function () {
     var childrenArray = [];
     this.htmlElements.forEach( function (el) {
-      childrenArray.push(el.children);
+      childrenArray = childrenArray.concat([].slice.call(el.children));
     });
     return new DOMNodeCollection(childrenArray);
   };
@@ -148,12 +150,12 @@
 
     xmlhttp.onreadystatechange = function() {
       if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
-       if(xmlhttp.status == 200){
-        option.success(JSON.parse(xmlhttp.response), "success", xmlhttp);
-       }'There was an error 400')
-       else {
-        option['error'](xmlhttp, 'failure', 'there was an error!');
-       }
+        if(xmlhttp.status == 200){
+          option.success(JSON.parse(xmlhttp.response), "success", xmlhttp);
+        }
+        else {
+          option['error'](xmlhttp, 'failure', 'there was an error!');
+        }
       }
     };
 

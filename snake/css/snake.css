@@ -1,0 +1,25 @@
+
+
+.snake-game {
+  position: absolute;
+  margin: auto;
+}
+
+ul {
+  list-style: none;
+  width: 500px;
+  height: 500px;
+  margin: auto;
+}
+
+li {
+  float: left;
+  width: 25px;
+  height: 25px;
+  background: #eee;
+  outline: 1px solid black;
+}
+
+.snake {
+  background: green;
+}
